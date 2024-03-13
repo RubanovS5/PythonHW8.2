@@ -18,45 +18,41 @@ class EmployeeApi:
         my_headers["x-client-token"] = self.get_token()
         resp = requests.post(self.url + '/company', json=company, headers=my_headers)
         return resp.json()["id"]
-        
     
 
     def get_employee(self, name, description):
-        company = {"name": name, "description": description}
-        company_id = self.create_new_company(name, description)  
-        params = {'name': name, 'description': description} 
-        resp = requests.get(self.url + '/employee', params=params)
+        params = {
+        'name': name,
+        'description': description
+    }
+        my_headers = {}
+        my_headers["x-client-token"] = self.get_token()
+        resp = requests.get(self.url + '/employee', params=params, headers=my_headers)
         return resp.json()
 
 
-    def add_employee(self, name=None, description=None, **employee_data): 
-        id = random.randint(1, 1000) 
-        first_name = employee_data.get('first_name') 
-        last_name = employee_data.get('last_name') 
-        middle_name = employee_data.get('middle_name') 
-        company_id = self.create_new_company(name, description) 
-        mail = employee_data.get('mail') 
-        employee_url = employee_data.get('url') 
-        phone = employee_data.get('phone') 
-        birthdate = employee_data.get('birthdate') 
-        is_active = employee_data.get('is_active', True) 
+    def add_employee(self, name, description, id, first_name, last_name, middle_name, company_id, mail, employee_url, phone, birthdate, is_active):
+        company = {"name": name, 
+        "description": description}
+        my_headers = {}
+        my_headers["x-client-token"] = self.get_token()
+        resp = requests.post(self.url + '/company', json=company, headers=my_headers)
+        company_id = resp.json()["id"]
+        employee_data = {
+        "id": id,
+        "first_name": first_name,
+        "last_name": last_name,
+        "middle_name": middle_name,
+        "company_id": company_id,
+        "mail": mail,
+        "employee_url": employee_url,
+        "phone": phone,
+        "birthdate": birthdate,
+        "is_active": is_active
+    }
         if not all([first_name, last_name, company_id, mail, phone, birthdate]): 
           raise ValueError("Не все обязательные поля заполнены") 
-        add_employee_data = { 
-            "id": id, 
-            "firstName": first_name, 
-            "lastName": last_name, 
-            "middleName": middle_name, 
-            "companyId": company_id, 
-            "email": mail, 
-            "url": employee_url, 
-            "phone": phone, 
-            "birthdate": birthdate, 
-            "isActive": is_active 
-        } 
-        my_headers = {} 
-        my_headers["x-client-token"] = self.get_token() 
-        resp = requests.post(self.url+'/employee', json=add_employee_data, headers=my_headers) 
+        my_headers = {}
+        my_headers["x-client-token"] = self.get_token()
+        resp = requests.post(self.url + '/employee', json = employee_data, headers = my_headers)
         return resp.json()
-
-  
